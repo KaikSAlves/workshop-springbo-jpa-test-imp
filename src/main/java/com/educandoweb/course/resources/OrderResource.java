@@ -32,5 +32,4 @@ public class OrderResource {
 		Order obj = this.orderService.findById(id);
 		return ResponseEntity.ok().body(obj);
 	}
-	
 }
