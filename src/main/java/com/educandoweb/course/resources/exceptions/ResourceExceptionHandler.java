@@ -32,9 +32,9 @@ public class ResourceExceptionHandler {
 		return ResponseEntity.status(status).body(err);
 	}
 
-	@ExceptionHandler(NullPointerException.class)
+	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<StandardError> nullPointer(NullPointerException e, HttpServletRequest request){
-		String error = "Null pointer error";
+		String error = "Illegal argument exception";
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(status).body(err);

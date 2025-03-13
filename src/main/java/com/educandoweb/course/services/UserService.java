@@ -31,10 +31,10 @@ public class UserService {
 	}
 	
 	public User insert(User obj){
-		if(obj == null){
+		if(obj != null){
 			return userRepository.save(obj);
 		}else{
-			throw new NullPointerException();
+			throw new IllegalArgumentException();
 		}
 	}
 	
