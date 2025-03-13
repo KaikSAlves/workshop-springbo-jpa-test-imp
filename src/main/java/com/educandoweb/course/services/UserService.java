@@ -30,8 +30,12 @@ public class UserService {
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 	
-	public User insert(User obj) {
-		return userRepository.save(obj);
+	public User insert(User obj){
+		if(obj == null){
+			return userRepository.save(obj);
+		}else{
+			throw new NullPointerException();
+		}
 	}
 	
 	public void delete(Long id) {
