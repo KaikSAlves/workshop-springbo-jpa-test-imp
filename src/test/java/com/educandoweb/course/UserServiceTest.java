@@ -2,11 +2,14 @@ package com.educandoweb.course;
 
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.services.UserService;
+import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -15,7 +18,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,19 +27,22 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 public class UserServiceTest {
 
-    @Mock
+    @Autowired
     private UserService userService;
+
+    @Mock
+    private UserService service;
 
 
     //TESTE DE EXCESSAO - FINDBYID    
     @Test
     public void deveLancarResourceNotFoundException(){
-        Mockito.when(userService.findById(1000000L)).thenThrow(ResourceNotFoundException.class);
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> userService.findById(1000000L));
     }
 
     @Test
     public void deveLancarInvalidDataAccessApiUsageException(){
-        Mockito.when(userService.findById(null)).thenThrow(InvalidDataAccessApiUsageException.class);
+        Assertions.assertThrows(InvalidDataAccessApiUsageException.class, () -> userService.findById(null));
     }
 
     //TESTE DE FUNCIONALIDADE - FINDBYID
@@ -43,15 +50,21 @@ public class UserServiceTest {
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L, 3L, 4L, 5L, 1})
     public void deveRetornarUmUsuarioDoBancoDeDados(Long id){
-        Mockito.when(userService.findById(id)).thenReturn(new User(id, "Nome","teste@gmail.com" , "1109812309", "asdasd"));
+        Mockito.when(service.findById(id)).thenReturn(new User());
+
     }
 
     //TESTE DE EXCESSOES - INSERT
 
     @Test
-    public void deveLancarIllegalArgumentExceptionQuandoObjetoNull(){
-        Mockito.when(userService.insert(null)).thenThrow(IllegalArgumentException.class);
+    public void deveLancarIllegalArgumentExceptionQuandoObjetoNull() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> userService.insert(null));
     }
 
+    //TESTE DE EXCESSOES - DELETE
 
+    @Test
+    public void deveLancarEmptyResultDataAccessExceptionQuandoIdInexistente() {
+        Assertions.assertThrows(EmptyResultDataAccessException.class, () -> userService.delete(100000L));
+    }
 }
