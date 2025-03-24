@@ -45,4 +45,13 @@ public class UserServiceTest {
     public void deveRetornarUmUsuarioDoBancoDeDados(Long id){
         Mockito.when(userService.findById(id)).thenReturn(new User(id, "Nome","teste@gmail.com" , "1109812309", "asdasd"));
     }
+
+    //TESTE DE EXCESSOES - INSERT
+
+    @Test
+    public void deveLancarIllegalArgumentExceptionQuandoObjetoNull(){
+        Mockito.when(userService.insert(null)).thenThrow(IllegalArgumentException.class);
+    }
+
+
 }
